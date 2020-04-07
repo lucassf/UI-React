@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Navbar, NavbarBrand } from 'reactstrap';
+import { Navbar, NavbarBrand } from 'react-bootstrap';
 import Menu from './components/MenuComponent';
-import {DISHES} from './shared/dishes';
+import { DISHES } from './shared/dishes';
 import './App.css';
 
 class App extends Component {
@@ -17,12 +17,12 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Navbar dark color="primary">
+        <Navbar bg="dark" variant="dark">
           <div className="container">
-            <NavbarBrand href="/">Ristorant Con Fusion</NavbarBrand>
+            <Navbar.Brand href="/">Ristorant Con Fusion</Navbar.Brand>
           </div>
         </Navbar>
-        <Menu dishes={this.state.dishes}/>
+        <Menu dishes={this.state.dishes} />
       </div>
     );
   }
