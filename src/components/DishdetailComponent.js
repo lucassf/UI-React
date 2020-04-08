@@ -4,9 +4,7 @@ import { Card } from 'react-bootstrap';
 class DishDetail extends Component {
     renderComments() {
         const comments = this.props.dish.comments.map((comment) => {
-            var year = comment.date.slice(0, 4)
-            var day = comment.date.slice(8, 10)
-            var month = (new Date(comment.date)).toLocaleString('default', { month: 'short' });
+            var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
             return (
                 <div key={comment.id}>
                     <li>
@@ -14,7 +12,7 @@ class DishDetail extends Component {
                     </li>
                     <p></p>
                     <li>
-                        -- {comment.author} , {month} {day}, {year}
+                        -- {comment.author} , {date}
                     </li>
                     <p></p>
                 </div>
@@ -36,18 +34,20 @@ class DishDetail extends Component {
                 <div></div>
             );
         return (
-            <div className="row">
-                <div className="col-12 col-md-5 m-1">
-                    <Card>
-                        <Card.Img width="100%" src={this.props.dish.image} alt={this.props.dish.name}></Card.Img>
-                        <Card.Body>
-                            <Card.Title>{this.props.dish.name}</Card.Title>
-                            <Card.Text>{this.props.dish.description}</Card.Text>
-                        </Card.Body>
-                    </Card>
-                </div>
-                <div className="col-12 col-md-5 m-1">
-                    {this.renderComments()}
+            <div className="container">
+                <div className="row">
+                    <div className="col-12 col-md-5 m-1">
+                        <Card>
+                            <Card.Img width="100%" src={this.props.dish.image} alt={this.props.dish.name}></Card.Img>
+                            <Card.Body>
+                                <Card.Title>{this.props.dish.name}</Card.Title>
+                                <Card.Text>{this.props.dish.description}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                    <div className="col-12 col-md-5 m-1">
+                        {this.renderComments()}
+                    </div>
                 </div>
             </div>
         );
