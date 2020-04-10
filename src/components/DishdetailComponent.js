@@ -1,8 +1,12 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Breadcrumb } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-function RenderComments({dish}) {
-    const comments = dish.comments.map((comment) => {
+function RenderComments({ comments }) {
+    if (comments == null){
+        return (<div/>)
+    }
+    const reactComments = comments.map((comment) => {
         var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
         return (
             <div key={comment.id}>
@@ -21,7 +25,7 @@ function RenderComments({dish}) {
         <div>
             <h4>Comments</h4>
             <ul className="list-unstyled">
-                {comments}
+                {reactComments}
             </ul>
         </div>
     );
@@ -35,6 +39,17 @@ function DishDetail(props) {
     return (
         <div className="container">
             <div className="row">
+                <Breadcrumb>
+                    <Breadcrumb.Item><Link to='/home'>Home</Link></Breadcrumb.Item>
+                    <Breadcrumb.Item><Link to='/menu'>Menu</Link></Breadcrumb.Item>
+                    <Breadcrumb.Item active>{props.dish.name}</Breadcrumb.Item>
+                </Breadcrumb>
+                <div className="col-12">
+                    <h3>{props.dish.name}</h3>
+                    <hr />
+                </div>
+            </div>
+            <div className="row">
                 <div className="col-12 col-md-5 m-1">
                     <Card>
                         <Card.Img width="100%" src={props.dish.image} alt={props.dish.name}></Card.Img>
@@ -45,7 +60,7 @@ function DishDetail(props) {
                     </Card>
                 </div>
                 <div className="col-12 col-md-5 m-1">
-                    <RenderComments dish={props.dish}/>
+                    <RenderComments comments={props.comments} />
                 </div>
             </div>
         </div>
