@@ -53,7 +53,7 @@ class Header extends Component {
                         </Nav>
                         <Nav className="ml-auto">
                             <Nav.Item>
-                                <Button outline onClick={this.toggleModal}>
+                                <Button variant="outline-secondary" onClick={this.toggleModal}>
                                     <span className="fa fa-sign-in fa-lg" /> Login
                                 </Button>
                             </Nav.Item>
@@ -73,7 +73,7 @@ class Header extends Component {
                     </div>
                 </Jumbotron>
                 <Modal show={this.state.isModalOpen} onHide={this.toggleModal}>
-                    <Modal.Header closeButton>Login</Modal.Header>
+                    <Modal.Header closeButton><Modal.Title>Login</Modal.Title></Modal.Header>
                     <Modal.Body>
                         <Form onSubmit={this.handleLogin}>
                             <Form.Group>

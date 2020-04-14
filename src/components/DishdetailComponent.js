@@ -1,11 +1,9 @@
 import React from 'react';
 import { Card, Breadcrumb } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import CommentForm from './CommentForm'
 
 function RenderComments({ comments }) {
-    if (comments == null){
-        return (<div/>)
-    }
     const reactComments = comments.map((comment) => {
         var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
         return (
@@ -27,6 +25,7 @@ function RenderComments({ comments }) {
             <ul className="list-unstyled">
                 {reactComments}
             </ul>
+            <CommentForm />
         </div>
     );
 }
