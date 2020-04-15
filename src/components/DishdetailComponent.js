@@ -3,7 +3,7 @@ import { Card, Breadcrumb } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import CommentForm from './CommentForm'
 
-function RenderComments({ comments }) {
+function RenderComments({ comments, addComment, dishId }) {
     const reactComments = comments.map((comment) => {
         var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
         return (
@@ -25,7 +25,7 @@ function RenderComments({ comments }) {
             <ul className="list-unstyled">
                 {reactComments}
             </ul>
-            <CommentForm />
+            <CommentForm addComment={addComment} dishId={dishId}/>
         </div>
     );
 }
@@ -59,7 +59,9 @@ function DishDetail(props) {
                     </Card>
                 </div>
                 <div className="col-12 col-md-5 m-1">
-                    <RenderComments comments={props.comments} />
+                    <RenderComments comments={props.comments}
+                        addComment={props.addComment}
+                        dishId={props.dish.id}/>
                 </div>
             </div>
         </div>
