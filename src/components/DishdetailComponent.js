@@ -1,7 +1,8 @@
 import React from 'react';
 import { Card, Breadcrumb } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import CommentForm from './CommentForm'
+import CommentForm from './CommentForm';
+import { Loading } from './LoadingComponent';
 
 function RenderComments({ comments, addComment, dishId }) {
     const reactComments = comments.map((comment) => {
@@ -25,12 +26,30 @@ function RenderComments({ comments, addComment, dishId }) {
             <ul className="list-unstyled">
                 {reactComments}
             </ul>
-            <CommentForm addComment={addComment} dishId={dishId}/>
+            <CommentForm addComment={addComment} dishId={dishId} />
         </div>
     );
 }
 
 function DishDetail(props) {
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    if (props.errMsg) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMsg}</h4>
+                </div>
+            </div>
+        );
+    }
     if (props.dish == null)
         return (
             <div></div>
@@ -61,7 +80,7 @@ function DishDetail(props) {
                 <div className="col-12 col-md-5 m-1">
                     <RenderComments comments={props.comments}
                         addComment={props.addComment}
-                        dishId={props.dish.id}/>
+                        dishId={props.dish.id} />
                 </div>
             </div>
         </div>
