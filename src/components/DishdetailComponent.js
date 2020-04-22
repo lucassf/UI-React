@@ -3,6 +3,7 @@ import { Card, Breadcrumb } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import CommentForm from './CommentForm';
 import { Loading } from './LoadingComponent';
+import {baseUrl} from '../shared/baseUrl'
 
 function RenderComments({ comments, addComment, dishId }) {
     const reactComments = comments.map((comment) => {
@@ -70,7 +71,7 @@ function DishDetail(props) {
             <div className="row">
                 <div className="col-12 col-md-5 m-1">
                     <Card>
-                        <Card.Img width="100%" src={props.dish.image} alt={props.dish.name}></Card.Img>
+                        <Card.Img width="100%" src={baseUrl + props.dish.image} alt={props.dish.name}></Card.Img>
                         <Card.Body>
                             <Card.Title>{props.dish.name}</Card.Title>
                             <Card.Text>{props.dish.description}</Card.Text>
