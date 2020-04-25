@@ -3,29 +3,34 @@ import { Card, Breadcrumb } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import CommentForm from './CommentForm';
 import { Loading } from './LoadingComponent';
-import {baseUrl} from '../shared/baseUrl'
+import { baseUrl } from '../shared/baseUrl'
+import { FadeTransform, Fade, Stagger } from 'react-animation-components'
 
 function RenderComments({ comments, postComment, dishId }) {
     const reactComments = comments.map((comment) => {
         var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
         return (
-            <div key={comment.id}>
-                <li>
-                    {comment.comment}
-                </li>
-                <p></p>
-                <li>
-                    -- {comment.author} , {date}
-                </li>
-                <p></p>
-            </div>
+            <Fade in>
+                <div key={comment.id}>
+                    <li>
+                        {comment.comment}
+                    </li>
+                    <p></p>
+                    <li>
+                        -- {comment.author} , {date}
+                    </li>
+                    <p></p>
+                </div>
+            </Fade>
         )
     });
     return (
         <div>
             <h4>Comments</h4>
             <ul className="list-unstyled">
-                {reactComments}
+                <Stagger in>
+                    {reactComments}
+                </Stagger>
             </ul>
             <CommentForm postComment={postComment} dishId={dishId} />
         </div>
@@ -70,13 +75,17 @@ function DishDetail(props) {
             </div>
             <div className="row">
                 <div className="col-12 col-md-5 m-1">
-                    <Card>
-                        <Card.Img width="100%" src={baseUrl + props.dish.image} alt={props.dish.name}></Card.Img>
-                        <Card.Body>
-                            <Card.Title>{props.dish.name}</Card.Title>
-                            <Card.Text>{props.dish.description}</Card.Text>
-                        </Card.Body>
-                    </Card>
+                    <FadeTransform in transformProps={{
+                        exitTransform: 'scale(0.5) translateY(-50%)'
+                    }}>
+                        <Card>
+                            <Card.Img width="100%" src={baseUrl + props.dish.image} alt={props.dish.name}></Card.Img>
+                            <Card.Body>
+                                <Card.Title>{props.dish.name}</Card.Title>
+                                <Card.Text>{props.dish.description}</Card.Text>
+                            </Card.Body>
+                        </Card>
+                    </FadeTransform>
                 </div>
                 <div className="col-12 col-md-5 m-1">
                     <RenderComments comments={props.comments}
