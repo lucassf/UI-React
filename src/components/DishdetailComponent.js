@@ -10,8 +10,8 @@ function RenderComments({ comments, postComment, dishId }) {
     const reactComments = comments.map((comment) => {
         var date = (new Date(comment.date)).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });
         return (
-            <Fade in>
-                <div key={comment.id}>
+            <Fade in key={comment.id}>
+                <div>
                     <li>
                         {comment.comment}
                     </li>

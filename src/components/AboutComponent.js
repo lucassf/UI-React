@@ -1,27 +1,36 @@
 import React from 'react';
 import { Breadcrumb, Card, Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
+import { Fade, Stagger } from 'react-animation-components'
 
-function RenderLeader({ leader }) {
-    return (
-        <Media as="li">
-            <img className="align-self-start mr-3"
-                width={64} height={64} src={leader.image} alt={leader.name}
-            />
-            <Media.Body>
-                <h5>{leader.name}</h5>
-                <p>{leader.designation}</p>
-                <p>{leader.description}</p>
-            </Media.Body>
-        </Media>
-    );
+function RenderLeaders(leaders, errMsg, isLoading) {
+    if (isLoading)
+        return <Loading />
+    if (errMsg)
+        return <h4>{errMsg}</h4>
+    return leaders.map((leader) => {
+        return (
+            <Fade in key={leader.id}>
+                <Media>
+                    <img className="align-self-start mr-3"
+                        width={64} height={64} src={baseUrl + leader.image} alt={leader.name}
+                    />
+                    <Media.Body>
+                        <h5>{leader.name}</h5>
+                        <p>{leader.designation}</p>
+                        <p>{leader.description}</p>
+                    </Media.Body>
+                </Media>
+            </Fade>
+        );
+    })
 }
 
 function About(props) {
-    console.log(props.leaders)
-    const leaders = props.leaders.map((leader) => {
-        return <RenderLeader key={leader.id} leader={leader}/>;
-    });
+
+    const leaders = RenderLeaders(props.leaders, props.errMag, props.isLoading);
 
     return (
         <div className="container">
@@ -79,7 +88,9 @@ function About(props) {
                 </div>
                 <div className="col-12">
                     <ul className="list-unstyled">
-                        {leaders}
+                        <Stagger in>
+                            {leaders}
+                        </Stagger>
                     </ul>
                 </div>
             </div>

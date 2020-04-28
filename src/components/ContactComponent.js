@@ -16,8 +16,9 @@ class Contact extends Component {
     }
 
     handleSubmit(values) {
-        alert("Current state is " + JSON.stringify(values))
-        this.props.resetFeedbackForm();
+        alert(JSON.stringify(values))
+        this.props.postFeedback(values)
+        // this.props.resetFeedbackForm();
     }
 
     render() {
@@ -54,7 +55,7 @@ class Contact extends Component {
                     <div className="col-12 col-sm-11 offset-sm-1">
                         <div className="btn-group" role="group">
                             <a role="button" className="btn btn-primary" href="tel:+85212345678"><i className="fa fa-phone"></i> Call</a>
-                            <a role="button" className="btn btn-info"><i className="fa fa-skype"></i> Skype</a>
+                            <a role="button" className="btn btn-info" href="skype"><i className="fa fa-skype"></i> Skype</a>
                             <a role="button" className="btn btn-success" href="mailto:confusion@food.net"><i className="fa fa-envelope-o"></i> Email</a>
                         </div>
                     </div>
