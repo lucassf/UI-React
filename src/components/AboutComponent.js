@@ -1,13 +1,22 @@
 import React from 'react';
 import { Breadcrumb, Card, Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
 import { Fade, Stagger } from 'react-animation-components'
+import Skeleton from 'react-loading-skeleton';
 
 function RenderLeaders(leaders, errMsg, isLoading) {
     if (isLoading)
-        return <Loading />
+        return (
+            <Media>
+                <Skeleton circle={true} height={64} width={64} />
+                <Media.Body>
+                    <h5><Skeleton width={`30%`}/></h5>
+                    <p><Skeleton width={`80%`}/>
+                    <Skeleton width={`80%`}/></p>
+                </Media.Body>
+            </Media>
+        )
     if (errMsg)
         return <h4>{errMsg}</h4>
     return leaders.map((leader) => {

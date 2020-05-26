@@ -1,12 +1,21 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
 import { FadeTransform } from 'react-animation-components';
+import Skeleton from 'react-loading-skeleton';
 
 function RenderCard({ item, isLoading, errMsg }) {
     if (isLoading) {
-        return <Loading />
+        return (
+            <Card>
+                <Skeleton height={320}/>
+                
+                <Card.Body>
+                    <Card.Title><Skeleton /></Card.Title>
+                    <Card.Text><Skeleton height={90}/></Card.Text>
+                </Card.Body>
+            </Card>
+        )
     }
     if (errMsg) {
         return (

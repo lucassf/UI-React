@@ -40,6 +40,7 @@
     "bootstrap-social": "^5.1.1",
     "font-awesome": "^4.7.0",
     "react-bootstrap": "^1.0.0",
+    "react-loading-skeleton": "^2.0.1",
     "react-popper": "^2.0.0",
     "react-redux": "^7.2.0",
     "react-redux-form": "^1.16.14",
