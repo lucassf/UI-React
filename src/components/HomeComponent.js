@@ -21,6 +21,8 @@ function RenderCard({ item, isLoading, errMsg }) {
         return (
             <h4>{errMsg}</h4>
         );
+    } if (typeof(item) === 'undefined'){
+        return <div/>
     }
     return (
         <FadeTransform in transformProps={{

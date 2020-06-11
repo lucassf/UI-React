@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
+import Favorites from './FavoritesComponent';
 import About from './AboutComponent';
 import Contact from './ContactComponent';
 import Header from './HeaderComponent';
@@ -8,15 +9,21 @@ import Footer from './FooterComponent';
 import DishDetail from './DishdetailComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { postComment, fetchDishes, fetchPromos, fetchComments, fetchLeaders, postFeedback } from '../redux/ActionCreator'
+import {
+    postComment, fetchDishes, fetchPromos, fetchComments, fetchLeaders,
+    postFeedback, fetchFavorites, deleteFavorite, postFavorite,
+    loginUser, logoutUser
+} from '../redux/ActionCreator'
 import { actions } from 'react-redux-form';
 
 const mapStateToProps = state => {
     return {
         dishes: state.dishes,
+        favorites: state.favorites,
         comments: state.comments,
         promotions: state.promotions,
-        leaders: state.leaders
+        leaders: state.leaders,
+        auth: state.auth
     }
 }
 
@@ -28,7 +35,12 @@ const mapDispatchToProps = (dispatch) => ({
     fetchComments: () => dispatch(fetchComments()),
     fetchPromos: () => dispatch(fetchPromos()),
     fetchLeaders: () => dispatch(fetchLeaders()),
-    postFeedback: (newFeedback) => dispatch(postFeedback(newFeedback))
+    fetchFavorites: () => dispatch(fetchFavorites()),
+    deleteFavorite: (dishId) => dispatch(deleteFavorite(dishId)),
+    postFavorite: (dishId) => dispatch(postFavorite(dishId)),
+    postFeedback: (newFeedback) => dispatch(postFeedback(newFeedback)),
+    loginUser: (creds) => dispatch(loginUser(creds)),
+    logoutUser: () => dispatch(logoutUser())
 });
 
 class MainComponent extends Component {
@@ -37,6 +49,7 @@ class MainComponent extends Component {
         this.props.fetchDishes();
         this.props.fetchComments();
         this.props.fetchPromos();
+        this.props.fetchFavorites();
         this.props.fetchLeaders();
     }
 
@@ -58,19 +71,33 @@ class MainComponent extends Component {
 
         const DishWithID = ({ match }) => {
             return (
-                <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
+                <DishDetail dish={this.props.dishes.dishes.filter((dish) => dish._id === match.params.dishId)[0]}
                     isLoading={this.props.dishes.isLoading}
                     errMsg={this.props.dishes.errMsg}
-                    comments={this.props.comments.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+                    comments={this.props.comments.comments.filter((comment) => comment.dish === match.params.dishId)}
                     commentsErrMsg={this.props.comments.errMsg}
                     postComment={this.props.postComment}
+                    postFavorite={this.props.postFavorite}
+                    favorite={this.props.favorites.favorites ?
+                        this.props.favorites.favorites.dishes.some((dish) => dish._id === match.params.dishId) : false}
                 />
             );
         };
 
+        const PrivateRoute = ({ component: Component, ...rest }) => (
+            <Route {...rest} render={(props) => (
+                this.props.auth.isAuthenticated ?
+                    <Component {...props} /> :
+                    <Redirect to={{
+                        pathname: '/home',
+                        state: { from: props.location }
+                    }} />
+            )} />
+        );
+
         return (
             <div>
-                <Header />
+                <Header loginUser={this.props.loginUser} auth={this.props.auth} logoutUser={this.props.logoutUser} />
                 <Switch location={this.props.location}>
                     <Route path="/home" component={HomePage} />
                     <Route exact path="/menu">
@@ -80,6 +107,8 @@ class MainComponent extends Component {
                         <About leaders={this.props.leaders.leaders} isLoading={this.props.leaders.isLoading}
                             errMsg={this.props.leaders.errMsg} />} />
                     <Route path="/menu/:dishId" component={DishWithID} />
+                    <PrivateRoute exact path="/favorites" component={() =>
+                        <Favorites favorites={this.props.favorites} deleteFavorite={this.props.deleteFavorite} />} />
                     <Route exact path="/contactus" component={() =>
                         <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback} />} />
                     <Redirect to="/home" />

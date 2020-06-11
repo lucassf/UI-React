@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Modal, Row, Form, Col } from 'react-bootstrap';
-import { LocalForm, Control, Errors } from 'react-redux-form';
-
-const maxLength = (len) => (val) => !(val) || (val.length <= len);
-const minLength = (len) => (val) => (val) && (val.length >= len);
+import { LocalForm, Control } from 'react-redux-form';
 
 class CommentForm extends Component {
     constructor(props) {
@@ -19,7 +16,9 @@ class CommentForm extends Component {
 
     handleSubmit = (values) => {
         this.toggleModal();
-        this.props.postComment(this.props.dishId, values.rating, values.name, values.comment)
+        console.log(this.props.dishId);
+        this.props.postComment(this.props.dishId, typeof (values.rating) == "undefined" ? 1 : values.rating,
+            values.comment)
     }
 
     render() {
@@ -43,21 +42,6 @@ class CommentForm extends Component {
                                         <option>4</option>
                                         <option>5</option>
                                     </Control.select>
-                                </Col>
-                            </Row>
-                            <Row className="form-group">
-                                <Form.Label column htmlFor="name" md={12} >Your Name</Form.Label>
-                                <Col md={12} >
-                                    <Control.text model=".name" id="name" name="name"
-                                        placeholder="Your Name" className="form-control"
-                                        validators={{
-                                            minLength: minLength(3), maxLength: maxLength(15)
-                                        }} />
-                                    <Errors className="text-danger" model=".name" show="touched"
-                                        messages={{
-                                            minLength: 'Must be greater than 2 characters',
-                                            maxLength: 'Must be less than 16 characters'
-                                        }} />
                                 </Col>
                             </Row>
                             <Row className="form-group">

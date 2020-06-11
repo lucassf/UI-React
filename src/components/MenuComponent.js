@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { Loading } from './LoadingComponent'
 import { baseUrl } from '../shared/baseUrl'
 
-function RenderMenuItem({ dish, onClick }) {
+function RenderMenuItem({ dish }) {
     return (
         <Card>
-            <Link to={`/menu/${dish.id}`}>
+            <Link to={`/menu/${dish._id}`}>
                 <Card.Img width="100%" src={baseUrl + dish.image} alt={dish.name} />
                 <Card.ImgOverlay>
                     <Card.Title>{dish.name}</Card.Title>
@@ -30,14 +30,14 @@ const Menu = (props) => {
         return (
             <div className="container">
                 <div className="row">
-                    <h4>{props.errMsg}</h4>
+                    <h4>{props.dishes.errMsg}</h4>
                 </div>
             </div>
         );
     }
     const menu = props.dishes.dishes.map((dish) => {
         return (
-            <div key={dish.id} className="col-12 col-md-5 m-1">
+            <div key={dish._id} className="col-12 col-md-5 m-1">
                 <RenderMenuItem dish={dish} />
             </div>
         )

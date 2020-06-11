@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, NavItem, Jumbotron, Button, Modal, Form } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+
 
 class Header extends Component {
 
@@ -14,9 +16,11 @@ class Header extends Component {
     toggleModal = () => { this.setState({ isModalOpen: !this.state.isModalOpen }) }
     handleLogin = (event) => {
         this.toggleModal();
-        alert("Username: " + this.username.value + "\nPassword: " +
-            this.password.value + "\nRemember: " + this.remember.checked);
-        event.preventDefault();            
+        this.props.loginUser({ username: this.username.value, password: this.password.value })
+        event.preventDefault();
+    }
+    handleLogout = (event) => {
+        this.props.logoutUser();
     }
 
     render() {
@@ -24,7 +28,7 @@ class Header extends Component {
             <>
                 <Navbar collapseOnSelect="true" bg="dark" variant="dark" expand="md" fixed="top">
                     <Navbar.Brand className="mr-auto" href="/">
-                        <img src="assets/images/logo.png" height="30" width="41"
+                        <img src={baseUrl + "images/logo.png"} height="30" width="41"
                             alt="Ristorante Con Fusion" />
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -46,6 +50,11 @@ class Header extends Component {
                                 </NavLink>
                             </NavItem>
                             <NavItem>
+                                <NavLink className="nav-link" to="/favorites">
+                                    <span className="fa fa-star fa-lg"></span> My Favorites
+                                </NavLink>
+                            </NavItem>
+                            <NavItem>
                                 <NavLink className="nav-link" to="/contactus">
                                     <span className="fa fa-address-card fa-lg"></span> Contact Us
                                 </NavLink>
@@ -53,9 +62,24 @@ class Header extends Component {
                         </Nav>
                         <Nav className="ml-auto">
                             <Nav.Item>
-                                <Button variant="outline-secondary" onClick={this.toggleModal}>
-                                    <span className="fa fa-sign-in fa-lg" /> Login
-                                </Button>
+                                {!this.props.auth.isAuthenticated ?
+                                    <Button variant="outline-secondary" onClick={this.toggleModal}>
+                                        <span className="fa fa-sign-in fa-lg" /> Login
+                                    {this.props.auth.isFetching ?
+                                            <span className="fa fa-spiner fa-pulse fa-fw"></span> : null}
+                                    </Button>
+                                    :
+                                    <div>
+                                        <div className="navbar-text mr-3">{this.props.auth.username}</div>
+                                        <Button outline onClick={this.handleLogout}>
+                                            <span className="fa fa-sign-out fa-lg"></span> Logout
+                                            {this.props.auth.isFetching ?
+                                                <span className="fa fa-spinner fa-pulse fa-fw"></span>
+                                                : null
+                                            }
+                                        </Button>
+                                    </div>
+                                }
                             </Nav.Item>
                         </Nav>
                     </Navbar.Collapse>

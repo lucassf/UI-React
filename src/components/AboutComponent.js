@@ -39,7 +39,7 @@ function RenderLeaders(leaders, errMsg, isLoading) {
 
 function About(props) {
 
-    const leaders = RenderLeaders(props.leaders, props.errMag, props.isLoading);
+    const leaders = RenderLeaders(props.leaders, props.errMsg, props.isLoading);
 
     return (
         <div className="container">

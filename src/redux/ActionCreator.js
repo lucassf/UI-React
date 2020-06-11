@@ -1,25 +1,105 @@
 import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../shared/baseUrl';
 
+const requestLogin = (creds) => {
+    return {
+        type: ActionTypes.LOGIN_REQUEST,
+        creds
+    }
+}
+
+export const loginUser = (creds) => (dispatch) => {
+    dispatch(requestLogin(creds));
+
+    return fetch(baseUrl + 'users/login', {
+        method: 'POST',
+        body: JSON.stringify(creds),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) return response;
+        else {
+            var error = new Error('Error ' + response.status + ': ' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    }, error => {
+        throw new Error(error.message);
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                localStorage.setItem('token', response.token);
+                dispatch(fetchFavorites());
+                dispatch(receiveLogin(response, creds.username));
+            }
+            else {
+                var error = new Error('Error ' + response.status);
+                error.response = response;
+                throw error;
+            }
+        })
+        .catch(error => {
+            dispatch(loginError(error.message))
+        });
+}
+
+const requestLogout = () => {
+    return {
+        type: ActionTypes.LOGOUT_REQUEST
+    }
+}
+
+export const logoutUser = () => (dispatch) => {
+    dispatch(requestLogout())
+    localStorage.removeItem('token');
+    localStorage.removeItem('creds');
+    dispatch(favoritesFailed("Error 401: Unauthorized"));
+    dispatch(receiveLogout())
+}
+
+const loginError = (message) => {
+    return {
+        type: ActionTypes.LOGIN_FAILURE,
+        message
+    }
+}
+
+const receiveLogin = (response, username) => {
+    return {
+        type: ActionTypes.LOGIN_SUCCESS,
+        token: response.token,
+        username: username
+    }
+}
+
+const receiveLogout = () => {
+    return {
+        type: ActionTypes.LOGOUT_SUCCESS
+    }
+}
+
 export const addComment = (comment) => ({
     type: ActionTypes.ADD_COMMENT,
     payload: comment
 })
 
-export const postComment = (dishId, rating, author, comment) => (dispatch) => {
+export const postComment = (dishId, rating, comment) => (dispatch) => {
     const newComment = {
-        dishId: dishId,
+        dish: dishId,
         rating: rating,
-        author: author,
         comment: comment
     }
-    newComment.date = new Date().toISOString();
+    console.log(newComment)
+    const bearer = 'Bearer ' + localStorage.getItem('token');
 
     return fetch(baseUrl + 'comments', {
         method: 'POST',
         body: JSON.stringify(newComment),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': bearer
         },
         credentials: 'same-origin'
     }).then(response => {
@@ -193,3 +273,98 @@ export const postFeedback = (newFeedback) => (dispatch) => {
             alert('Your feedback could not be posted\nError: ' + error.message)
         });
 }
+
+export const postFavorite = (dishId) => (dispatch) => {
+    const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    return fetch(baseUrl + 'favorites/' + dishId, {
+        method: 'POST',
+        body: JSON.stringify({ '_id': dishId }),
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': bearer
+        },
+        credentials: 'same-origin'
+    }).then(response => {
+        if (response.ok) return response;
+        else {
+            var error = new Error('Error ' + response.status + ': ' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    }, error => {
+        throw error;
+    })
+        .then(response => response.json())
+        .then(favorites => {
+            console.log('Favorite added: ' + favorites);
+            dispatch(addFavorites(favorites));
+        })
+        .catch(error => dispatch(favoritesFailed(error.message)));
+}
+
+export const deleteFavorite = (dishId) => (dispatch) => {
+    const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    return fetch(baseUrl + 'favorites/' + dishId, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': bearer
+        },
+        credentials: 'same-origin'
+    }).then(response => {
+        if (response.ok) return response;
+        else {
+            var error = new Error('Error ' + response.status + ': ' + response.statusText);
+            error.response = response;
+            throw error;
+        }
+    }, error => {
+        throw error;
+    })
+        .then(response => response.json())
+        .then(favorites => {
+            console.log('Favorite deleted. Remained: ' + favorites);
+            dispatch(addFavorites(favorites));
+        })
+        .catch(error => dispatch(favoritesFailed(error.message)));
+}
+
+export const fetchFavorites = () => (dispatch) => {
+    const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    dispatch(favoritesLoading());
+
+    return fetch(baseUrl + 'favorites', {
+        headers: {
+            'Authorization': bearer
+        }
+    })
+        .then(response => {
+            if (response.ok) return response;
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText);
+                error.response = response;
+                throw error;
+            }
+        }, error => {
+            throw new Error(error.message);
+        })
+        .then(response => response.json())
+        .then(favorites => dispatch(addFavorites(favorites)))
+        .catch(error => dispatch(favoritesFailed(error.message)));
+}
+
+export const favoritesLoading = () => ({
+    type: ActionTypes.FAVORITES_LOADING
+})
+
+export const addFavorites = (favorites) => ({
+    type: ActionTypes.ADD_FAVORITES,
+    payload: favorites
+})
+
+export const favoritesFailed = (errMsg) => ({
+    type: ActionTypes.FAVORITES_FAILED,
+    payload: errMsg
+})
